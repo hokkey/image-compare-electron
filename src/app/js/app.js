@@ -1,33 +1,28 @@
-var app = require('app');  // Module to control application life.
-var BrowserWindow = require('browser-window');  // Module to create native browser window.
+import $ from 'jquery';
+const spawn = require('child_process').spawn;
 
-// Report crashes to our server.
-require('crash-reporter').start();
+class process {
+  constructor(cmd, options, callback) {
+    let exe = spawn(cmd, options);
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the javascript object is GCed.
-var mainWindow = null;
+    exe.stdout.on('data', (data) => {
+      callback(`${data}`);
+    });
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function() {
-  if (process.platform != 'darwin')
-    app.quit();
-});
+    exe.stderr.on('data', (data) => {
+      callback(`${data}`);
+    });
 
-// This method will be called when Electron has done everything
-// initialization and ready for creating browser windows.
-app.on('ready', function() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+    exe.on('close', (code) => {
+      console(`child process exited with code ${code}`);
+    });
+  }
+}
 
-  // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html');
+let output = (text) => {
+  document.body.innerHTML += `<pre>${text}</pre>`;
+};
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
+$('#button').click((event) => {
+  const ls = new process('cowsay', ['hoge'], output);
 });

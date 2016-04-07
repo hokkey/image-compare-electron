@@ -15,6 +15,7 @@ let webpackConfig = {
             'src'
         ]
     },
+    target: 'atom',
     module: {
         preLoaders: [
             { test: /\.js$/, exclude:/Spec\.js$/i, loaders: ['eslint'] }
