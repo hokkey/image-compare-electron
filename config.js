@@ -6,7 +6,7 @@ module.exports = {
     // 出力先ディレクトリ
     dist: 'public/%type%',
     // gulpコマンドでデフォルトで監視するディレクトリ(src/*/)
-    defaultPath: 'pc',
+    defaultPath: 'app',
     // 変更監視時にユニットテストも行うかどうか
     autoTest: true,
     // CSSの設定
