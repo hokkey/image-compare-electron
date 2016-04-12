@@ -1,21 +1,102 @@
 const bin = 'gm';
 const gmConvert = `${bin} convert`;
 const gmCompare = `${bin} compare`;
+const pdfExt = /\.pdf$/;
+
+
+let _checkRegex = (path, regex) => {
+  if (typeof path === 'undefined') {
+    throw new Error('Param must not be empty!');
+  }
+  let result = path.match(regex);
+  return result !== null;
+};
+
+/**
+ * 文字列の末尾に".pdf"が含まれるかどうかをチェックする
+ *
+ * @return {Boolean}
+ */
+let _checkPdfExt = (path) => {
+  return _checkRegex(path, pdfExt);
+};
+
+/**
+ * 文字列の末尾に"/"が含まれるかどうかをチェックする
+ *
+ * @return {Boolean}
+ */
+let _checkEndSlash = (path) => {
+  return _checkRegex(path, /\/$/);
+};
+
+
 
 export default class GMagick {
+
+  /**
+   * メインのAPI。受け取った文字列と同じ名前のメソッドに引数を渡す
+   * 返り値はコマンド文字列
+   *
+   * @method getCommand
+   * @static
+   * @param type {String}
+   * @param args {Array}
+   * @return {String}
+   */
   static getCommand(type, ...args) {
     return GMagick[`get${type}`](...args);
   }
-  
-  static getCompare(compareStyle, outputPath, targetPath1, targetPath2) {
+
+  /**
+   * 画像比較コマンド文字列を返す
+   *
+   * @method getCompare
+   * @static
+   * @param outputPath {String} 結果を出力するパス
+   * @param targetPath1 {String} 差分の比較元1
+   * @param targetPath2 {String} 差分の比較元2
+   * @param compareStyle {String} 画像比較の表現。デフォルトは'xor'
+   */
+  static getCompare(outputPath, targetPath1, targetPath2, compareStyle = 'xor') {
+    [outputPath, targetPath1, targetPath2].forEach((path) => {
+      if (_checkPdfExt(path) === false) {
+        throw new Error('targetPath must be a PDF file');
+      }
+    });
     return `${gmCompare} -highlight-style ${compareStyle} -file ${outputPath} ${targetPath1} ${targetPath2}`;
   }
 
+  /**
+   * 画像を結合して1つのPDFにする
+   *
+   * @method getCombine
+   * @static
+   * @param inputDir {String}
+   * @param outputPath {String}
+   */
   static getCombine(inputDir, outputPath) {
-    return `${gmCompare} ${inputDir}/* ${outputPath}`;
+    if (_checkPdfExt(outputPath) === false) {
+      throw new Error('param "outputPath" must be a PDF file');
+    }
+    if (_checkEndSlash(inputDir) === false) {
+      inputDir = inputDir + '/';
+    }
+    return `${gmConvert} ${inputDir}* ${outputPath}`;
   }
 
-  static getDevide(input) {
-    return '';
+  /**
+   * PDFを分割して複数のファイルにする
+   *
+   * @method getDevide
+   * @static
+   * @param inputFile {String}
+   * @param outputFilePath {String}
+   */
+  static getDevide(inputFile, outputFilePath) {
+    if (_checkPdfExt(inputFile) === false) {
+      throw new Error('param "inputFile" must be a PDF file');
+    }
+    return `${gmConvert} ${inputFile} +adjoin ${outputFilePath}`;
   }
 }
