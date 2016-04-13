@@ -2,7 +2,7 @@ const bin = 'gm';
 const gmConvert = `${bin} convert`;
 const gmCompare = `${bin} compare`;
 const pdfExt = /\.pdf$/;
-
+const density = 150;
 
 let _checkRegex = (path, regex) => {
   if (typeof path === 'undefined') {
@@ -30,8 +30,6 @@ let _checkEndSlash = (path) => {
   return _checkRegex(path, /\/$/);
 };
 
-
-
 export default class GMagick {
 
   /**
@@ -53,18 +51,31 @@ export default class GMagick {
    *
    * @method getCompare
    * @static
-   * @param outputPath {String} 結果を出力するパス
    * @param targetPath1 {String} 差分の比較元1
    * @param targetPath2 {String} 差分の比較元2
-   * @param compareStyle {String} 画像比較の表現。デフォルトは'xor'
+   * @param metricOnly {Boolean} [option] 解析結果だけを返す。デフォルトはtrue
+   * @param outputPath {String} 結果を出力するパス
+   * @param compareStyle {String} [option] 画像比較の表現。デフォルトは'xor'
+   * @return {String} コマンド
    */
-  static getCompare(outputPath, targetPath1, targetPath2, compareStyle = 'xor') {
-    [outputPath, targetPath1, targetPath2].forEach((path) => {
-      if (_checkPdfExt(path) === false) {
-        throw new Error('targetPath must be a PDF file');
-      }
-    });
-    return `${gmCompare} -highlight-style ${compareStyle} -file ${outputPath} ${targetPath1} ${targetPath2}`;
+  static getCompare(targetPath1, targetPath2, metricOnly = false, outputPath = '', compareStyle = 'xor') {
+    let additionalOption;
+
+    if (metricOnly === true) {
+      additionalOption = ' -metric MAE'
+    }
+
+    if (metricOnly === false) {
+      additionalOption = ` -file ${outputPath}`;
+
+      [outputPath, targetPath1, targetPath2].forEach((path) => {
+        if (_checkPdfExt(path) === false) {
+          throw new Error('targetPath must be a PDF file');
+        }
+      });
+    }
+
+    return `${gmCompare} -highlight-style ${compareStyle}${additionalOption} ${targetPath1} ${targetPath2}`;
   }
 
   /**
@@ -97,6 +108,6 @@ export default class GMagick {
     if (_checkPdfExt(inputFile) === false) {
       throw new Error('param "inputFile" must be a PDF file');
     }
-    return `${gmConvert} ${inputFile} +adjoin ${outputFilePath}`;
+    return `${gmConvert}  -density ${density}x${density} ${inputFile} +adjoin ${outputFilePath}`;
   }
 }
