@@ -2,20 +2,16 @@
 let webpack = require("webpack");
 
 let webpackConfig = {
+    node: {
+        child_process: 'empty'
+    },
     output: {
         filename: "[name].js",
         sourceMapFilename: 'maps/[name].map',
         jsonpFunction: 'fr'
     },
     devtool: '#source-map',
-    resolve: {
-        modulesDirectories: [
-            'bower_components',
-            'node_modules',
-            'src'
-        ]
-    },
-    target: 'atom',
+    target: 'electron',
     module: {
         preLoaders: [
             { test: /\.js$/, exclude:/Spec\.js$/i, loaders: ['eslint'] }

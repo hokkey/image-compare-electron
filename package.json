@@ -3,7 +3,11 @@
   "version": "3.0.0",
   "description": "フロントエンド開発の効率をあげるフルスタックテンプレート",
   "main": "gulpfile.js",
-  "dependencies": {},
+  "dependencies": {
+    "async": "^2.0.0-rc.3",
+    "check-types": "^6.0.0",
+    "underscore": "^1.8.3"
+  },
   "devDependencies": {
     "autoprefixer": "^6.3.3",
     "babel-core": "^6.5.2",
@@ -36,9 +40,11 @@
     "html-loader": "^0.4.3",
     "jquery": "^2.2.3",
     "karma": "^0.13.21",
+    "karma-electron-launcher": "^0.1.0",
     "karma-mocha": "^0.2.2",
     "karma-notify-reporter": "^0.1.1",
     "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^1.7.0",
     "merge": "^1.2.0",
     "merge-stream": "^1.0.0",

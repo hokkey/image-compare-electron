@@ -99,15 +99,15 @@ export default class GMagick {
   /**
    * PDFを分割して複数のファイルにする
    *
-   * @method getDevide
+   * @method getSplit
    * @static
    * @param inputFile {String}
    * @param outputFilePath {String}
    */
-  static getDevide(inputFile, outputFilePath) {
+  static getSplit(inputFile, outputFilePath) {
     if (_checkPdfExt(inputFile) === false) {
       throw new Error('param "inputFile" must be a PDF file');
     }
-    return `${gmConvert}  -density ${density}x${density} ${inputFile} +adjoin ${outputFilePath}`;
+    return `${gmConvert} -density ${density}x${density} ${inputFile} +adjoin ${outputFilePath}`;
   }
 }

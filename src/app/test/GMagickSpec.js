@@ -59,4 +59,12 @@ describe('GMagick', function () {
 
   });
 
+  describe('GMagick.getSplit()', function () {
+    it('画像を分割する', function (done) {
+      let result = gm.getSplit('./test/target.pdf', './out%03d.pdf');
+      assert.deepEqual(result, 'gm convert -density 150x150 ./test/target.pdf +adjoin ./out%03d.pdf');
+      done();
+    });
+  });
+
 });

@@ -1,28 +1,24 @@
 import $ from 'jquery';
-const spawn = require('child_process').spawn;
+import Shell from '../js/class/Shell';
+import GMagickTask from '../js/class/GMagickTask';
 
-class process {
-  constructor(cmd, options, callback) {
-    let exe = spawn(cmd, options);
-
-    exe.stdout.on('data', (data) => {
-      callback(`${data}`);
-    });
-
-    exe.stderr.on('data', (data) => {
-      callback(`${data}`);
-    });
-
-    exe.on('close', (code) => {
-      console(`child process exited with code ${code}`);
-    });
+let list = [
+  {
+    src: '/Users/hori_yuma/Desktop/workdir/src/1/fil.pdf',
+    dest: '/Users/hori_yuma/Desktop/workdir/tmp/1/file_%03d.pdf'
+  },
+  {
+    src: '/Users/hori_yuma/Desktop/workdir/src/2/fie.pdf',
+    dest: '/Users/hori_yuma/Desktop/workdir/tmp/2/file_%03d.pdf'
   }
-}
+];
 
-let output = (text) => {
-  document.body.innerHTML += `<pre>${text}</pre>`;
-};
+let commands = GMagickTask.genCmdStr('splitPdf', list);
 
-$('#button').click((event) => {
-  const ls = new process('cowsay', ['hoge'], output);
+commands.forEach((cmd) => {
+  try {
+    console.log(Shell.exec(cmd));
+  } catch (e) {
+    console.error(e);
+  }
 });
