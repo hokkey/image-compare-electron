@@ -14,11 +14,17 @@ export default class AppCommander {
 
   }
 
-  combinePdf(target, dest) {
+  combinePdf(targetFilePath) {
     GMagickTask.genCmdStr('combinePdf', {
       src: target,
-      dest: dest
+      dest: `${this.workDir}/${this.dest}/`
     });
+
+    try {
+      console.log(Shell.exec(cmd));
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   splitPdf(targetFileName) {
