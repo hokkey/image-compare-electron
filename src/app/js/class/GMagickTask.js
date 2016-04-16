@@ -40,12 +40,17 @@ export default class GMagickTask {
     return GMagick.getCommand('Compare', option.src, option.src2, option.metricOnly, option.dest, option.compareStyle);
   }
 
+  /**
+   * 差分がある時にtrue, 差分がない時にfalse
+   *
+   *
+   */
   static checkCompareResult(input) {
     let result = input.match(diffPattern);
     if (result === null) {
-      return false;
+      return true;
     }
     // 結果に差分ゼロが3回(Red/Green/Blue)以上登場したら差分なし
-    return (result.length >= 3);
+    return (!result.length >= 3);
   }
 }

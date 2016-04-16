@@ -6,6 +6,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.3",
     "check-types": "^6.0.0",
+    "del": "^2.2.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

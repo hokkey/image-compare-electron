@@ -4,7 +4,7 @@ describe('AppCommander', function () {
   let ac;
 
   before(function () {
-    ac = new AppCommander();
+    ac = new AppCommander({workDir: './src/app/test/workdir'});
   });
 
   describe('execCmd', function () {
@@ -54,12 +54,12 @@ describe('AppCommander', function () {
   describe('compareImageMetric', function () {
     let testPath = './src/app/test/image/';
 
-    it('内容が同じ画像の場合はtrue', function () {
-      assert(ac.compareImageMetric(`${testPath}1.jpg`, `${testPath}2.jpg`) === true);
+    it('内容が同じ画像の場合はfalse', function () {
+      assert(ac.compareImageMetric(`${testPath}1.jpg`, `${testPath}2.jpg`) === false);
     });
 
-    it('内容が違う画像の場合はfalse', function () {
-      assert(ac.compareImageMetric(`${testPath}1.jpg`, `${testPath}3.jpg`) === false);
+    it('内容が違う画像の場合はtrue', function () {
+      assert(ac.compareImageMetric(`${testPath}1.jpg`, `${testPath}3.jpg`) === true);
     });
   });
 
@@ -68,7 +68,7 @@ describe('AppCommander', function () {
 
     it('期待される画像と全く同じ画像が生成される', function () {
       ac.compareImageWithOutput(`${testPath}1.jpg`, `${testPath}3.jpg`, 'xor', `${testPath}/result.jpg`);
-      assert(ac.compareImageMetric(`${testPath}4.jpg`, `${testPath}result.jpg`) === true);
+      assert(ac.compareImageMetric(`${testPath}4.jpg`, `${testPath}result.jpg`) === false);
     });
   });
 
@@ -77,6 +77,14 @@ describe('AppCommander', function () {
 
     it('期待されるファイルの一覧が返される', function () {
       assert.deepEqual(ac.readDir(testPath), ['1.jpg', '2.jpg', '3.jpg', '4.jpg', 'result.jpg']);
+    });
+  });
+
+  describe('runTask', function () {
+    this.timeout(20000);
+
+    it('', function () {
+      ac.runTask('test.pdf', 'test2.pdf');
     });
   });
 

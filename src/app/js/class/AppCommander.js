@@ -7,7 +7,7 @@ import Shell from './Shell';
 export default class AppCommander {
   constructor(option) {
     // 末尾にスラッシュ不要
-    this.workDir = './workdir' || option.workDir;
+    this.workDir =  option.workDir ? option.workDir : './workdir';
     this.srcPath  = this.workDir + '/src'  || option.srcPath;
     this.tmpPath  = this.workDir + '/tmp'  || option.tmpPath;
     this.destPath = this.workDir + '/dest' || option.destPath;
@@ -30,6 +30,8 @@ export default class AppCommander {
   
   runTask(target1, target2, outputDiffOnly = true) {
     // ディレクトリを準備する
+    this.clean(this.splitResultPath);
+    this.clean(this.compareResultPath);
     this.makedir([
       this.srcPath,
       this.compareResultPath,
@@ -39,7 +41,6 @@ export default class AppCommander {
     ]);
     
     // 画像を分割
-    this.clean(this.splitResultPath);
     this.splitPdf(target1, 1);
     this.splitPdf(target2, 2);
     
@@ -57,7 +58,6 @@ export default class AppCommander {
     }
 
     // 比較を実行
-    this.clean(this.compareResultPath);
     let result = [];
     t1Pages.forEach((fileName, index) => {
       let path1 = `${this.splitResultPath}/1/${fileName}`;
@@ -66,14 +66,14 @@ export default class AppCommander {
         return false;
       }
       let path2 = `${this.splitResultPath}/2/${t2Pages[index]}`;
-      result.push(this.compareImage(path1, path2, outputDiffOnly));
+      result.push(this.compareImage(path1, path2, fileName, outputDiffOnly));
     });
 
     // 比較結果をまとめる
     if (result[0] === false) {
       throw new Error('No success comparing!');
     }
-    this.combineToPdf(this.compareResultPath);
+    this.combineToPdf(this.destPath);
   }
 
   /**
@@ -132,7 +132,7 @@ export default class AppCommander {
       } catch (e) {
         result.stdout.push(e);
         result.hasError = true;
-        console.error(e);
+        console.error(e.cmd);
       }
     });
 
@@ -184,7 +184,7 @@ export default class AppCommander {
    * @return {Object}
    */
   combineToPdf(dest) {
-    let cmd = GMagickTask.genCmdStr('combinePdf', {
+    let cmd = GMagickTask.genCmdStr('combineImages', {
       src: this.compareResultPath,
       dest: `${dest}/${this.resultFilePrefix}_${AppCommander.genDateStr()}.pdf`
     });
@@ -196,9 +196,9 @@ export default class AppCommander {
    *
    *
    */
-  compareImage(target1, target2, diffOnly) {
+  compareImage(target1, target2, fileName, diffOnly) {
     let type = this.compareStyle;
-    let destPath = this.destPath;
+    let destPath = this.compareResultPath + '/' + fileName;
 
     // 差分があるファイルのみ画像を出力する
     if (diffOnly) {
