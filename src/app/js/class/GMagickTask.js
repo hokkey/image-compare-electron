@@ -10,10 +10,6 @@ export default class GMagickTask {
     case 'splitPdf':
       return this.splitPdfTask(options);
       break;
-    
-    case 'splitPdfs':
-      return this.splitPdfsTask(options);
-      break;
 
     case 'combineImages':
       return this.combineImagesTask(options);

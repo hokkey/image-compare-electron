@@ -84,6 +84,7 @@ describe('AppCommander', function () {
     this.timeout(20000);
 
     it('', function () {
+      ac.clean('./src/app/test/workdir/dest/**');
       ac.runTask('test.pdf', 'test2.pdf');
     });
   });

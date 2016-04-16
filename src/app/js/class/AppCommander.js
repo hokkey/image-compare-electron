@@ -8,28 +8,39 @@ export default class AppCommander {
   constructor(option) {
     // 末尾にスラッシュ不要
     this.workDir =  option.workDir ? option.workDir : './workdir';
-    this.srcPath  = this.workDir + '/src'  || option.srcPath;
-    this.tmpPath  = this.workDir + '/tmp'  || option.tmpPath;
-    this.destPath = this.workDir + '/dest' || option.destPath;
-    this.tmpImageFormat = 'jpg' || option.tmpImageFormat;
+    this.srcPath  = option.srcPath ? option.srcPath : this.workDir + '/src' ;
+    this.tmpPath  = option.tmpPath ? option.tmpPath : this.workDir + '/tmp' ;
+    this.destPath = option.destPath ? option.destPath : this.workDir + '/dest';
+    this.tmpImageFormat = option.tmpImageFormat ? option.tmpImageFormat : 'jpg';
 
     this.compareResultPath = this.tmpPath + '/compare_result';
     this.splitResultPath = this.tmpPath + '/split_result';
     this.splitCounter = '%03d';
     this.splitDensity = 150;
-    this.compareStyle = 'xor' || option.compareStyle;
-    this.resultFilePrefix = 'result_' || option.resultFilePrefix;
+    this.compareStyle = option.compareStyle ? option.compareStyle : 'xor';
+    this.resultFilePrefix = option.resultFilePrefix ? option.resultFilePrefix : 'result';
     this.busy = false;
   }
 
+  runTask(target1, target2, outputDiffOnly = true) {
+    this.initDir();
+    this.splitPdf(target1, 1);
+    this.splitPdf(target2, 2);
+    // 比較結果をまとめる
+    if (this.compareStep(this.splitResultPath, outputDiffOnly)[0] === false) {
+      throw new Error('No success comparing!');
+    }
+    this.combineToPdf(this.destPath);
+  }
+  
   makedir(dirList) {
     dirList.forEach((item) => {
       this.execCmd([`mkdir -p ${item}`]);
     });
   }
-  
-  runTask(target1, target2, outputDiffOnly = true) {
-    // ディレクトリを準備する
+
+  // ディレクトリを準備する
+  initDir() {
     this.clean(this.splitResultPath);
     this.clean(this.compareResultPath);
     this.makedir([
@@ -39,41 +50,27 @@ export default class AppCommander {
       this.splitResultPath + '/2',
       this.destPath
     ]);
-    
-    // 画像を分割
-    this.splitPdf(target1, 1);
-    this.splitPdf(target2, 2);
-    
-    // 分割後のファイル一覧を取得する
-    let t1Pages = this.readDir(`${this.splitResultPath}/1/`);
-    let t2Pages = this.readDir(`${this.splitResultPath}/2/`);
+  }
 
-
+  // 比較ステップ
+  compareStep(splitResultPath, outputDiffOnly) {
+    let t1Pages = this.readDir(`${splitResultPath}/1/`);
+    let t2Pages = this.readDir(`${splitResultPath}/2/`);
     if (t1Pages.length <= 0 || t2Pages.length <= 0) {
       throw new Error('No pages!');
     }
 
-    if (t1Pages.length !== t2Pages.length) {
-      console.info('Different page number!')
-    }
-
-    // 比較を実行
     let result = [];
     t1Pages.forEach((fileName, index) => {
-      let path1 = `${this.splitResultPath}/1/${fileName}`;
+      let path1 = `${splitResultPath}/1/${fileName}`;
       if (typeof t2Pages[index] === 'undefined') {
         console.info('No target2 page. Stop this process.');
         return false;
       }
-      let path2 = `${this.splitResultPath}/2/${t2Pages[index]}`;
+      let path2 = `${splitResultPath}/2/${t2Pages[index]}`;
       result.push(this.compareImage(path1, path2, fileName, outputDiffOnly));
     });
-
-    // 比較結果をまとめる
-    if (result[0] === false) {
-      throw new Error('No success comparing!');
-    }
-    this.combineToPdf(this.destPath);
+    return result;
   }
 
   /**
