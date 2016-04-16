@@ -11,6 +11,8 @@ module.exports = function(config) {
     delete webpackConfig.entry;
     // outputをdeleteしないとts-loader使った時などに、拡張子のない謎のファイルができることがある
     delete webpackConfig.output;
+    // ソースマップを生成
+    webpackConfig.devtool = 'inline-source-map';
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -23,7 +25,7 @@ module.exports = function(config) {
         files: conf.path.test.src,
         exclude: [],
         preprocessors: {
-            'src/**/test/**/*.js': ['webpack', 'sourcemap']
+            'src/**/test/**/*.js': ['electron', 'webpack', 'sourcemap']
         },
         webpack: webpackConfig,
         webpackMiddleware: {

@@ -17,7 +17,6 @@ export default class Shell {
    *
    */
   static exec(command) {
-    let options = DEFAULT_EXEC_OPTION;
     return '' + childProcess.execSync(command);
   }
 }

@@ -1,5 +1,7 @@
 import GMagick from './GMagick';
 
+const diffPattern = /0\.0000000000/g;
+
 export default class GMagickTask {
   
   static genCmdStr(taskType, options) {
@@ -10,7 +12,7 @@ export default class GMagickTask {
       break;
     
     case 'splitPdfs':
-      return this.splitPdfTasks(options);
+      return this.splitPdfsTask(options);
       break;
 
     case 'combineImages':
@@ -26,20 +28,24 @@ export default class GMagickTask {
     }
   }
   
-  static splitPdfTask(options) {
-    let result = [];
+  static splitPdfTask(option) {
+    return GMagick.getCommand('Split', option.src, option.dest, option.density);
+  }
+  
+  static combineImagesTask(option) {
+    return GMagick.getCommand('Combine', option.src, option.dest);
+  }
+  
+  static compareImagesTask(option) {
+    return GMagick.getCommand('Compare', option.src, option.src2, option.metricOnly, option.dest, option.compareStyle);
+  }
 
-    // optionsは配列
-    /* options = [
-      {
-        src:  './pdf_1/target.pdf',
-        dest: './temp/1/target_%03d.jpg'
-      };
-    ]; */
-    options.forEach((item) => {
-      result.push(GMagick.getCommand('Split', item.src, item.dest));
-    });
-
-    return result;
+  static checkCompareResult(input) {
+    let result = input.match(diffPattern);
+    if (result === null) {
+      return false;
+    }
+    // 結果に差分ゼロが3回(Red/Green/Blue)以上登場したら差分なし
+    return (result.length >= 3);
   }
 }

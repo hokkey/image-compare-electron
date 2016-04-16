@@ -2,7 +2,6 @@ const bin = 'gm';
 const gmConvert = `${bin} convert`;
 const gmCompare = `${bin} compare`;
 const pdfExt = /\.pdf$/;
-const density = 150;
 
 let _checkRegex = (path, regex) => {
   if (typeof path === 'undefined') {
@@ -67,12 +66,6 @@ export default class GMagick {
 
     if (metricOnly === false) {
       additionalOption = ` -file ${outputPath}`;
-
-      [outputPath, targetPath1, targetPath2].forEach((path) => {
-        if (_checkPdfExt(path) === false) {
-          throw new Error('targetPath must be a PDF file');
-        }
-      });
     }
 
     return `${gmCompare} -highlight-style ${compareStyle}${additionalOption} ${targetPath1} ${targetPath2}`;
@@ -104,7 +97,7 @@ export default class GMagick {
    * @param inputFile {String}
    * @param outputFilePath {String}
    */
-  static getSplit(inputFile, outputFilePath) {
+  static getSplit(inputFile, outputFilePath, density = 150) {
     if (_checkPdfExt(inputFile) === false) {
       throw new Error('param "inputFile" must be a PDF file');
     }

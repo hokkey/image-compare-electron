@@ -15,24 +15,7 @@ describe('GMagick', function () {
       assert.deepEqual(result, 'gm compare -highlight-style xor -metric MAE target1.pdf target2.pdf');
       done();
     });
-
-    describe('異常系テスト', function () {
-      let tests = [
-        ['t1.pdf', 't2.pdf', false, 'out'],
-        ['t1', 't2.pdf', false, 'out.pdf'],
-        ['t1.pdf', 't2', false, 'out.pdf']
-      ];
-
-      tests.forEach((ary) => {
-        it('引数に拡張子".pdf"が含まれない場合はエラー', function (done) {
-          assert.throws(() => {
-            console.log(gm.getCompare(...ary));
-          });
-          done();
-        });
-      });
-
-    });
+    
   });
 
 
@@ -60,11 +43,13 @@ describe('GMagick', function () {
   });
 
   describe('GMagick.getSplit()', function () {
+    
     it('画像を分割する', function (done) {
       let result = gm.getSplit('./test/target.pdf', './out%03d.pdf');
       assert.deepEqual(result, 'gm convert -density 150x150 ./test/target.pdf +adjoin ./out%03d.pdf');
       done();
     });
+    
   });
-
+  
 });

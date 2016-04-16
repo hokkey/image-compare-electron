@@ -1,5 +1,8 @@
 {
   "name": "image-compare",
   "version": "0.1.0",
-  "main": "main.js"
+  "main": "main.js",
+  "dependencies": {
+    "del": "^2.2.0"
+  }
 }

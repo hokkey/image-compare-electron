@@ -19,6 +19,7 @@
     "css-mqpacker": "^4.0.0",
     "del": "^2.2.0",
     "ejs": "^2.4.1",
+    "electron-prebuilt": "^0.37.6",
     "eslint": "^2.1.0",
     "eslint-loader": "^1.3.0",
     "espower-loader": "^1.0.0",
@@ -40,7 +41,7 @@
     "html-loader": "^0.4.3",
     "jquery": "^2.2.3",
     "karma": "^0.13.21",
-    "karma-electron-launcher": "^0.1.0",
+    "karma-electron": "^3.0.5",
     "karma-mocha": "^0.2.2",
     "karma-notify-reporter": "^0.1.1",
     "karma-phantomjs-launcher": "^1.0.0",
@@ -55,7 +56,8 @@
     "sinon": "^1.17.3",
     "through2": "^2.0.1",
     "webpack": "^1.12.13",
-    "webpack-espower-loader": "^1.0.1"
+    "webpack-espower-loader": "^1.0.1",
+    "webpack-node-externals": "^1.0.0"
   },
   "scripts": {
     "start": "npm install && npm run build",
