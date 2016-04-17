@@ -33,9 +33,10 @@ export default class FileList {
     }
     return this.items[this.activeItem].path;
   }
-
+  
   addBtnClickHandler() {
     this.$addBtn.click((e) => {
+      
       let win = this.browserWindow.getFocusedWindow();
       this.dialog.showOpenDialog(win, this.dialogOption, (filePathList) => {
         if (typeof filePathList === 'undefined') {
