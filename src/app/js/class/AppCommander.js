@@ -3,9 +3,12 @@ import fs from 'fs';
 import del from 'del';
 import GMagickTask from './GMagickTask';
 import Shell from './Shell';
+let mkdirp = require('mkdirp');
+
 
 export default class AppCommander {
-  constructor(option) {
+  constructor(option, app) {
+    this.app = app;
     // 末尾にスラッシュ不要
     this.workDir =  option.workDir ? option.workDir : './workdir';
     this.tmpPath  = option.tmpPath ? option.tmpPath : this.workDir + 'tmp' ;
@@ -36,7 +39,7 @@ export default class AppCommander {
   
   makedir(dirList) {
     dirList.forEach((item) => {
-      this.execCmd([`mkdir ${item}`]);
+      mkdirp.sync(item);
     });
   }
 
@@ -122,7 +125,7 @@ export default class AppCommander {
 
     cmds.forEach((cmd) => {
       try {
-        let out = Shell.execFile(cmd);
+        let out = Shell.execFile(cmd, this.app.getPath('exe'));
         result.stdout.push(out);
         console.log(out);
       } catch (e) {

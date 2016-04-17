@@ -39,7 +39,7 @@ app.on('ready', function() {
     mainWindow = null;
   });
 
-  ac = new AppCommander({workDir: app.getPath('temp')});
+  ac = new AppCommander({workDir: app.getPath('temp')}, app);
 
   ipcMain.on('asynchronous-runTask', function (event, arg1, arg2, outputDiffOnly, dest) {
     if (ac.busy) {

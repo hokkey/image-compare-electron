@@ -1,2 +1,2 @@
 #!/bin/sh
-mkdir "$@"
+mkdir -p "$@"

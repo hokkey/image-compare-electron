@@ -20,17 +20,9 @@ export default class Shell {
     return '' + childProcess.execSync(command);
   }
   
-  static execFile(command) {
-    if (command.match(/^mkdir /)) {
-      command = command.substr(6);
-      return childProcess.execFileSync(`${__dirname}/scripts/mkdir.sh`, [command], {
-        cwd: __dirname
-      });
-    }
+  static execFile(command, basePath) {
     command = command.substr(3);
     console.log(command.split(' '));
-    return childProcess.execFileSync(`${__dirname}/scripts/gm.sh`, command.split(' '), {
-      cwd: __dirname
-    });
+    return childProcess.execFileSync(`${__dirname}/scripts/gm.sh`, command.split(' '));
   }
 }

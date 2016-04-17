@@ -125,6 +125,10 @@ module.exports = {
       {
         from: 'src/%type%/images/**/*',
         to: 'public/%type%/images'
+      },
+      {
+        from: 'src/%type%/scripts/**/*',
+        to: 'public/%type%/scripts'
       }
     ]
   }

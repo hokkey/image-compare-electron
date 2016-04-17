@@ -1,9 +1,10 @@
 {
+  "productName": "ImageCompare",
   "name": "image-compare",
   "version": "0.1.0",
   "main": "main.js",
   "dependencies": {
-    "bootstrap": "^3.3.6",
-    "del": "^2.2.0"
+    "del": "^2.2.0",
+    "mkdirp": "^0.5.1"
   }
 }
