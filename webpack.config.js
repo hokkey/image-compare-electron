@@ -3,7 +3,9 @@ let webpack = require("webpack");
 
 let webpackConfig = {
     node: {
-        child_process: 'empty'
+        child_process: 'empty',
+        __dirname: false,
+        __filename: false
     },
     output: {
         filename: "[name].js",
@@ -24,7 +26,7 @@ let webpackConfig = {
     },
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
-            exclude: /Spec\.js$/i,
+            exclude: /[Spec]\.js$/i,
             compress: {
                 warnings: false
             }

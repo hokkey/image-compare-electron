@@ -85,7 +85,7 @@ describe('AppCommander', function () {
 
     it('', function () {
       ac.clean('./src/app/test/workdir/dest/**');
-      ac.runTask('test.pdf', 'test2.pdf');
+      ac.runTask('./src/app/test/workdir/src/test.pdf', './src/app/test/workdir/src/test2.pdf');
     });
   });
 

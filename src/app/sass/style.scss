@@ -9,22 +9,40 @@
 @import 'layout/layout';
 @import 'sprites/icon';
 
+.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
+  outline: 0;
+}
+
+.is-unvisible {
+  opacity: 0;
+}
+
 .pdf-group {
   padding-left: 0;
   padding-right: 0;
   position: relative;
   background-color: #eee;
 
-  &__btns {
+  &__heading {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     z-index: 2;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    margin: 0;
+  }
+
+  &__btns {
+    position: relative;
+    top: 3px;
+    left: 10px;
   }
 }
 .pdf-list {
-  padding-top: 33px;
+  padding-top: 35px;
   height: 400px;
   overflow-y: scroll;
   border-left: 1px solid #ddd;
@@ -33,13 +51,28 @@
   .list-group-item {
     border-left: 0;
     border-right: 0;
+
+    &:first-child,
+    &:last-child {
+      border-radius: 0;
+    }
   }
 }
 
 .pdf-item {
+  &:active {
+    opacity: 0.8;
+  }
+
   &__head {
     margin-top: 0;
     margin-bottom: 0;
+  }
+
+  &__path {
+    display: block;
+    margin-top: 3px;
+    line-height: 1.2;
   }
 }
 
@@ -48,5 +81,11 @@
   bottom: 0;
   left: 0;
   right: 0;
+
+  > * {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+  }
 }
 

@@ -8,7 +8,6 @@ export default class AppCommander {
   constructor(option) {
     // 末尾にスラッシュ不要
     this.workDir =  option.workDir ? option.workDir : './workdir';
-    this.srcPath  = option.srcPath ? option.srcPath : this.workDir + '/src' ;
     this.tmpPath  = option.tmpPath ? option.tmpPath : this.workDir + '/tmp' ;
     this.destPath = option.destPath ? option.destPath : this.workDir + '/dest';
     this.tmpImageFormat = option.tmpImageFormat ? option.tmpImageFormat : 'jpg';
@@ -22,15 +21,17 @@ export default class AppCommander {
     this.busy = false;
   }
 
-  runTask(target1, target2, outputDiffOnly = true) {
+  runTask(target1, target2, outputDiffOnly = true, destPath = this.destPath) {
     this.initDir();
     this.splitPdf(target1, 1);
     this.splitPdf(target2, 2);
     // 比較結果をまとめる
     if (this.compareStep(this.splitResultPath, outputDiffOnly)[0] === false) {
-      throw new Error('No success comparing!');
+      throw new Error('差分を生成できませんでした。完全に同一の内容でaる可能性があります。');
     }
-    this.combineToPdf(this.destPath);
+    this.combineToPdf(destPath);
+    this.clean(this.splitResultPath);
+    this.clean(this.compareResultPath);
   }
   
   makedir(dirList) {
@@ -41,10 +42,7 @@ export default class AppCommander {
 
   // ディレクトリを準備する
   initDir() {
-    this.clean(this.splitResultPath);
-    this.clean(this.compareResultPath);
     this.makedir([
-      this.srcPath,
       this.compareResultPath,
       this.splitResultPath + '/1',
       this.splitResultPath + '/2',
@@ -81,7 +79,7 @@ export default class AppCommander {
    * @return {Array}
    */
   clean(dir) {
-    return del.sync(dir + '/**');
+    return del.sync(dir + '/**', {force: true});
   }
 
   /**
@@ -166,9 +164,9 @@ export default class AppCommander {
    * @method splitPdf
    * @return {Object}
    */
-  splitPdf(targetFileName, num) {
+  splitPdf(targetFilePath, num) {
     return this.execCmd([GMagickTask.genCmdStr('splitPdf', {
-      src: `${this.srcPath}/${targetFileName}`,
+      src: targetFilePath,
       dest: `${this.splitResultPath}/${num}/${this.splitCounter}.${this.tmpImageFormat}`,
       density: this.splitDensity
     })]);

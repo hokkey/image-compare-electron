@@ -15,28 +15,36 @@
 <div class="container-fluid">
   <div class="row">
 
-    <% for (var i = 0; i < 2; i++) { %>
-    <div class="col-xs-6 pdf-group">
+    <% ['比較PDFソース1', '比較PDFソース2'].forEach((item, i) => { %>
+    <div class="col-xs-6 pdf-group js-file-list" id="js-file-list-<%= i+1 %>">
 
-      <div class="btn-group bg-primary pdf-group__btns" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-success">追加</button>
-        <button type="button" class="btn btn-primary">取り除く</button>
+      <div class="row pdf-group__heading">
+        <div class="col-xs-6">
+          <h1 class="h5"><%= item %></h1>
+        </div>
+        <div class="col-xs-6">
+          <div class="pull-right btn-group pdf-group__btns" role="group">
+            <button type="button" class="btn btn-sm btn-success js-add-btn">追加</button>
+            <button type="button" class="btn btn-sm btn-default js-remove-btn">クリア</button>
+          </div>
+        </div>
       </div>
 
-      <div class="list-group pdf-list">
-
-        <a href="#" class="list-group-item pdf-item">
-            <h1 class="h4 pdf-item__head">somefile.pdf</h1>
-            <small class="small pdf-item__path">/Volumes/Users/yuma/Desktop/somefile.pdf</small>
-        </a>
-
+      <div class="list-group pdf-list js-list">
+        <!--<a href="#" class="list-group-item pdf-item js-file-item" data-index="0">-->
+        <!--<h1 class="h4 pdf-item__head">somefile.pdf</h1>-->
+        <!--<small class="small pdf-item__path">/Volumes/Users/yuma/Desktop/somefile.pdf</small>-->
+        <!--</a>-->
       </div>
 
     </div>
-    <% } %>
+    <% }); %>
 
     <div class="pdf-footer">
-      <button type="button" class="btn btn-primary btn-block">差分PDFを作成</button>
+      <button type="button" class="btn btn-primary btn-block" id="js-run-task" style="width: 90%">差分PDFを作成</button>
+      <div class="progress is-unvisible" style="width: 90%">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%"></div>
+      </div>
     </div>
 
   </div>

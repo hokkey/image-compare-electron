@@ -104,6 +104,7 @@ module.exports = {
         'node_modules/power-assert/build/power-assert.js',
         'node_modules/sinon/pkg/sinon.js',
         'src/app/js/electron-shims.js',
+        'src/%type%/test/**/*.html',
         'src/%type%/test/**/*.js'
       ]
     },

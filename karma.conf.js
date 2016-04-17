@@ -25,6 +25,7 @@ module.exports = function(config) {
         files: conf.path.test.src,
         exclude: [],
         preprocessors: {
+            'src/**/test/**/*.html': ['html2js'],
             'src/**/test/**/*.js': ['electron', 'webpack', 'sourcemap']
         },
         webpack: webpackConfig,
