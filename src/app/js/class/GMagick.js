@@ -62,14 +62,14 @@ export default class GMagick {
     let additionalOption;
 
     if (metricOnly === true) {
-      additionalOption = ' -metric MAE'
+      additionalOption = '-metric MAE'
     }
 
     if (metricOnly === false) {
-      additionalOption = ` -file ${outputPath}`;
+      additionalOption = `-file ${outputPath} -highlight-style ${compareStyle}`;
     }
 
-    return `${gmCompare} -highlight-style ${compareStyle}${additionalOption} ${targetPath1} ${targetPath2}`;
+    return `${gmCompare} ${additionalOption} ${targetPath1} ${targetPath2}`;
   }
 
   /**

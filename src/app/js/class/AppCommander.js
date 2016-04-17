@@ -8,8 +8,8 @@ export default class AppCommander {
   constructor(option) {
     // 末尾にスラッシュ不要
     this.workDir =  option.workDir ? option.workDir : './workdir';
-    this.tmpPath  = option.tmpPath ? option.tmpPath : this.workDir + '/tmp' ;
-    this.destPath = option.destPath ? option.destPath : this.workDir + '/dest';
+    this.tmpPath  = option.tmpPath ? option.tmpPath : this.workDir + 'tmp' ;
+    this.destPath = option.destPath ? option.destPath : this.workDir + 'dest';
     this.tmpImageFormat = option.tmpImageFormat ? option.tmpImageFormat : 'jpg';
 
     this.compareResultPath = this.tmpPath + '/compare_result';
@@ -27,7 +27,7 @@ export default class AppCommander {
     this.splitPdf(target2, 2);
     // 比較結果をまとめる
     if (this.compareStep(this.splitResultPath, outputDiffOnly)[0] === false) {
-      throw new Error('差分を生成できませんでした。完全に同一の内容でaる可能性があります。');
+      throw new Error('差分を生成できませんでした。完全に同一の内容である可能性があります。');
     }
     this.combineToPdf(destPath);
     this.clean(this.splitResultPath);
@@ -36,7 +36,7 @@ export default class AppCommander {
   
   makedir(dirList) {
     dirList.forEach((item) => {
-      this.execCmd([`mkdir -p ${item}`]);
+      this.execCmd([`mkdir ${item}`]);
     });
   }
 
@@ -122,8 +122,9 @@ export default class AppCommander {
 
     cmds.forEach((cmd) => {
       try {
-        result.stdout.push(Shell.exec(cmd));
-        console.log(Shell.exec(cmd));
+        let out = Shell.execFile(cmd);
+        result.stdout.push(out);
+        console.log(out);
       } catch (e) {
         result.stdout.push(e);
         result.hasError = true;

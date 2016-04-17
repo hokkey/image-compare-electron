@@ -42,7 +42,7 @@ export default class GMagickTask {
    *
    */
   static checkCompareResult(input) {
-    let result = input.match(diffPattern);
+    let result = input.toString().match(diffPattern);
     if (result === null) {
       return true;
     }
