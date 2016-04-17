@@ -20,17 +20,12 @@ export default class Shell {
     return '' + childProcess.execSync(command);
   }
   
-  static execFile(command, basePath) {
-    command = command.substr(3);
-    return new Promise(function (resolve, reject) {
+  static execFile(command) {
+    command = command[0].substr(3);
+    return new Promise((resolve, reject) => {
       childProcess.execFile(`${__dirname}/scripts/gm.sh`, command.split(' '), (error, stdout, stderr) => {
         console.log(stdout);
-        if (stdout) {
-          resolve(stdout);
-        }
-        if (error) {
-          reject(error);
-        }
+        resolve(stdout);
       });
     })
   }

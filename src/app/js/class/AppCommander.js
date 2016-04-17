@@ -26,27 +26,23 @@ export default class AppCommander {
 
   runTask(target1, target2, outputDiffOnly = true, destPath = this.destPath) {
     this.initDir();
-    return new Promise((resolve, reject) => {
-      this.splitPdf(target1, 1).then(() => {
-        console.log('step1');
-        return this.splitPdf(target2, 2);
-      }).then(() => {
-        console.log('step2');
-        return this.comparePreStep(this.splitResultPath);
-      }).then((t1Page, t2Page) => {
-        console.log('step3');
-        return this.compareStep(this.splitResultPath, t1Page, t2Page, outputDiffOnly);
-      }).catch(() => {
-        console.log('step4');
-        reject(new Error('差分を生成できませんでした。完全に同一の内容である可能性があります。'));
-      }).then(() => {
-        return this.combineToPdf(destPath);
-      }).then(() => {
-        this.clean(this.splitResultPath);
-        this.clean(this.compareResultPath);
-      });
 
+    return this.splitPdf(target1, 1).then((out) => {
+      return this.splitPdf(target2, 2);
+    }).then(() => {
+      return this.comparePreStep(this.splitResultPath);
+    }).then((t1Page, t2Page) => {
+      console.log('step3');
+      return this.compareStep(this.splitResultPath, t1Page, t2Page, outputDiffOnly);
+    }).catch(() => {
+      reject(new Error('差分を生成できませんでした。完全に同一の内容である可能性があります。'));
+    }).then(() => {
+      return this.combineToPdf(destPath);
+    }).then(() => {
+      this.clean(this.splitResultPath);
+      this.clean(this.compareResultPath);
     });
+
   }
   
   makedir(dirList) {
@@ -212,7 +208,9 @@ export default class AppCommander {
     });
     
     return result.reduce((sequence, item) => {
+      console.log('step4');
       return sequence.then(() => {
+        console.log('step4');
         return this.compareImage(item.path1, item.path2, outputDiffOnly);
       });
     }, Promise.resolve());

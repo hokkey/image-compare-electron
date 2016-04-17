@@ -53,6 +53,7 @@ app.on('ready', function() {
       .catch(() => {
         console.error(e);
         event.sender.send('asynchronous-message', 'error', e.message);
+        event.sender.send('asynchronous-message', 'signal', false);
       });
     ;
   });
