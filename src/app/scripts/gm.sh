@@ -1,2 +1,2 @@
 #!/bin/sh
-gm "$@"
+/usr/local/bin/gm "$@"

@@ -46,12 +46,14 @@ app.on('ready', function() {
       event.sender.send('asynchronous-message', 'signal', false);
       return false;
     }
-    try {
-      ac.runTask(arg1, arg2, outputDiffOnly, dest);
-      event.sender.send('asynchronous-message', 'signal', false);
-    } catch(e) {
-      console.error(e);
-      event.sender.send('asynchronous-message', 'error', e.message);
-    } 
+    ac.runTask(arg1, arg2, outputDiffOnly, dest)
+      .then(() => {
+        event.sender.send('asynchronous-message', 'signal', false);
+      })
+      .catch(() => {
+        console.error(e);
+        event.sender.send('asynchronous-message', 'error', e.message);
+      });
+    ;
   });
 });

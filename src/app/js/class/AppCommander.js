@@ -26,15 +26,27 @@ export default class AppCommander {
 
   runTask(target1, target2, outputDiffOnly = true, destPath = this.destPath) {
     this.initDir();
-    this.splitPdf(target1, 1);
-    this.splitPdf(target2, 2);
-    // 比較結果をまとめる
-    if (this.compareStep(this.splitResultPath, outputDiffOnly)[0] === false) {
-      throw new Error('差分を生成できませんでした。完全に同一の内容である可能性があります。');
-    }
-    this.combineToPdf(destPath);
-    this.clean(this.splitResultPath);
-    this.clean(this.compareResultPath);
+    return new Promise((resolve, reject) => {
+      this.splitPdf(target1, 1).then(() => {
+        console.log('step1');
+        return this.splitPdf(target2, 2);
+      }).then(() => {
+        console.log('step2');
+        return this.comparePreStep(this.splitResultPath);
+      }).then((t1Page, t2Page) => {
+        console.log('step3');
+        return this.compareStep(this.splitResultPath, t1Page, t2Page, outputDiffOnly);
+      }).catch(() => {
+        console.log('step4');
+        reject(new Error('差分を生成できませんでした。完全に同一の内容である可能性があります。'));
+      }).then(() => {
+        return this.combineToPdf(destPath);
+      }).then(() => {
+        this.clean(this.splitResultPath);
+        this.clean(this.compareResultPath);
+      });
+
+    });
   }
   
   makedir(dirList) {
@@ -51,27 +63,6 @@ export default class AppCommander {
       this.splitResultPath + '/2',
       this.destPath
     ]);
-  }
-
-  // 比較ステップ
-  compareStep(splitResultPath, outputDiffOnly) {
-    let t1Pages = this.readDir(`${splitResultPath}/1/`);
-    let t2Pages = this.readDir(`${splitResultPath}/2/`);
-    if (t1Pages.length <= 0 || t2Pages.length <= 0) {
-      throw new Error('No pages!');
-    }
-
-    let result = [];
-    t1Pages.forEach((fileName, index) => {
-      let path1 = `${splitResultPath}/1/${fileName}`;
-      if (typeof t2Pages[index] === 'undefined') {
-        console.info('No target2 page. Stop this process.');
-        return false;
-      }
-      let path2 = `${splitResultPath}/2/${t2Pages[index]}`;
-      result.push(this.compareImage(path1, path2, fileName, outputDiffOnly));
-    });
-    return result;
   }
 
   /**
@@ -125,7 +116,7 @@ export default class AppCommander {
 
     cmds.forEach((cmd) => {
       try {
-        let out = Shell.execFile(cmd, this.app.getPath('exe'));
+        let out = Shell.execFile(cmd);
         result.stdout.push(out);
         console.log(out);
       } catch (e) {
@@ -137,6 +128,10 @@ export default class AppCommander {
 
     this.endBusy();
     return result;
+  }
+
+  execAsync(cmd) {
+    return Shell.execFile(cmd);
   }
 
   /**
@@ -166,10 +161,10 @@ export default class AppCommander {
    * PDF分割コマンドを実行
    *
    * @method splitPdf
-   * @return {Object}
+   * @return {Promise}
    */
   splitPdf(targetFilePath, num) {
-    return this.execCmd([GMagickTask.genCmdStr('splitPdf', {
+    return this.execAsync([GMagickTask.genCmdStr('splitPdf', {
       src: targetFilePath,
       dest: `${this.splitResultPath}/${num}/${this.splitCounter}.${this.tmpImageFormat}`,
       density: this.splitDensity
@@ -180,37 +175,65 @@ export default class AppCommander {
    * 比較結果画像をPDFに結合するコマンドを実行
    *
    * @method combinePdf
-   * @return {Object}
+   * @return {Promise}
    */
   combineToPdf(dest) {
-    let cmd = GMagickTask.genCmdStr('combineImages', {
+    return this.execAsync([GMagickTask.genCmdStr('combineImages', {
       src: this.compareResultPath,
       dest: `${dest}/${this.resultFilePrefix}_${AppCommander.genDateStr()}.pdf`
-    });
-    return this.execCmd([cmd]);
+    })]);
   }
+
+  comparePreStep(splitResultPath) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        let t1Pages = this.readDir(`${splitResultPath}/1/`);
+        let t2Pages = this.readDir(`${splitResultPath}/2/`);
+        if (t1Pages.length <= 0 || t2Pages.length <= 0) {
+          reject(new Error('No pages!'));
+        }
+        resolve(t1Pages, t2Pages);
+      }, 10);
+    });
+  }
+
+  // 比較ステップ
+  compareStep(splitResultPath, t1Pages, t2Pages, outputDiffOnly) {
+    let result = [];
+    
+    t1Pages.forEach((fileName, index) => {
+      let path1 = `${splitResultPath}/1/${fileName}`;
+      if (typeof t2Pages[index] === 'undefined') {
+        console.info('No target2 page. Stop this process.');
+      } else {
+        let path2 = `${splitResultPath}/2/${t2Pages[index]}`;
+        result.push({path1: path1, path2: path2});
+      }
+    });
+    
+    return result.reduce((sequence, item) => {
+      return sequence.then(() => {
+        return this.compareImage(item.path1, item.path2, outputDiffOnly);
+      });
+    }, Promise.resolve());
+    
+  }
+
 
   /**
    * 画像を比較するコマンドを実行
    *
    *
    */
-  compareImage(target1, target2, fileName, diffOnly) {
+  compareImage(target1, target2, diffOnly) {
     let type = this.compareStyle;
-    let destPath = this.compareResultPath + '/' + fileName;
+    let destPath = this.compareResultPath + '/' + this.genDateStr();
 
     // 差分があるファイルのみ画像を出力する
-    if (diffOnly) {
-      if (this.compareImageMetric(target1, target2)) {
-        this.compareImageWithOutput(target1, target2, type, destPath);
-        return true;
-      }
-      return false;
-    }
-    if (!diffOnly) {
-      this.compareImageWithOutput(target1, target2, type, destPath);
-      return true;
-    }
+    return this.compareImageMetric(target1, target2)
+      .then((target1, target2) => {
+        return this.compareImageWithOutput(target1, target2, type, destPath)
+    });
   }
 
   /**
@@ -227,7 +250,16 @@ export default class AppCommander {
       src2: target2,
       metricOnly: true
     });
-    return GMagickTask.checkCompareResult(this.execCmd([cmd]).stdout[0]);
+    return new Promise((resolve, reject) => {
+      this.execAsync([cmd])
+        .then((stdout) => {
+          if(GMagickTask.checkCompareResult(stdout)) {
+            resolve()
+          }
+          reject(target1, target2);
+        });
+    });
+    
   }
 
   /**
@@ -248,6 +280,6 @@ export default class AppCommander {
       dest: destPath,
       compareStyle: type
     });
-    return this.execCmd([cmd]);
+    return this.execAsync([cmd]);
   }
 }

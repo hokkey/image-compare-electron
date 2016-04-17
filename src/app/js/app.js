@@ -5,5 +5,4 @@ const dialog = require('electron').remote.dialog;
 const ipcRenderer = require('electron').ipcRenderer;
 
 import MainWindow from './class/MainWindow';
-
 new MainWindow(app, BrowserWindow, dialog, ipcRenderer);

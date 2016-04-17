@@ -22,7 +22,16 @@ export default class Shell {
   
   static execFile(command, basePath) {
     command = command.substr(3);
-    console.log(command.split(' '));
-    return childProcess.execFileSync(`${__dirname}/scripts/gm.sh`, command.split(' '));
+    return new Promise(function (resolve, reject) {
+      childProcess.execFile(`${__dirname}/scripts/gm.sh`, command.split(' '), (error, stdout, stderr) => {
+        console.log(stdout);
+        if (stdout) {
+          resolve(stdout);
+        }
+        if (error) {
+          reject(error);
+        }
+      });
+    })
   }
 }

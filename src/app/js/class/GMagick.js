@@ -7,7 +7,6 @@ let _checkRegex = (path, regex) => {
   if (typeof path === 'undefined') {
     throw new Error('Param must not be empty!');
   }
-  console.log(path);
   let result = path.match(regex);
   return result !== null;
 };
