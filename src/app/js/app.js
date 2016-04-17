@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import AppCommander from './class/AppCommander';
 
-let appCommander = new AppCommander({workDir:'./workdir'});
-appCommander.initDir();
+let remote = require('remote');
+let app = remote.require('app');
+let BrowserWindow = remote.require('browser-window');
+let dialog = remote.require('dialog');

@@ -1,5 +1,6 @@
 @import 'setting';
 
+@import 'base/bootstrap';
 //@import 'base/sanitize';
 //@import 'base/reset';
 //@import 'base/normalize';
@@ -7,3 +8,45 @@
 @import 'base/base';
 @import 'layout/layout';
 @import 'sprites/icon';
+
+.pdf-group {
+  padding-left: 0;
+  padding-right: 0;
+  position: relative;
+  background-color: #eee;
+
+  &__btns {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+}
+.pdf-list {
+  padding-top: 33px;
+  height: 400px;
+  overflow-y: scroll;
+  border-left: 1px solid #ddd;
+  margin-bottom: 0;
+
+  .list-group-item {
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+.pdf-item {
+  &__head {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.pdf-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+

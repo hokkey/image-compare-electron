@@ -9,9 +9,38 @@
   <meta name="viewport" content="width=device-width">
   <link rel="shortcut icon" href="images/common/favicon.ico">
   <link rel="apple-touch-icon-precomposed" href="images/common/apple-touch-icon-precomposed.png">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<button id="button">ボタンです</button>
+<div class="container-fluid">
+  <div class="row">
+
+    <% for (var i = 0; i < 2; i++) { %>
+    <div class="col-xs-6 pdf-group">
+
+      <div class="btn-group bg-primary pdf-group__btns" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-success">追加</button>
+        <button type="button" class="btn btn-primary">取り除く</button>
+      </div>
+
+      <div class="list-group pdf-list">
+
+        <a href="#" class="list-group-item pdf-item">
+            <h1 class="h4 pdf-item__head">somefile.pdf</h1>
+            <small class="small pdf-item__path">/Volumes/Users/yuma/Desktop/somefile.pdf</small>
+        </a>
+
+      </div>
+
+    </div>
+    <% } %>
+
+    <div class="pdf-footer">
+      <button type="button" class="btn btn-primary btn-block">差分PDFを作成</button>
+    </div>
+
+  </div>
+</div>
 <script src="./app.js"></script>
 </body>
 </html>
