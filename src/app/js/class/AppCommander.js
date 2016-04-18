@@ -25,10 +25,11 @@ export default class AppCommander {
     this.initDir();
     this.splitPdf(target1, 1);
     this.splitPdf(target2, 2);
+    this.compareStep(this.splitResultPath, outputDiffOnly);
     // 比較結果をまとめる
-    if (this.compareStep(this.splitResultPath, outputDiffOnly)[0] === false) {
-      throw new Error('差分を生成できませんでした。完全に同一の内容でaる可能性があります。');
-    }
+    // if (this.compareStep(this.splitResultPath, outputDiffOnly)[0] === false) {
+    //   throw new Error('差分を生成できませんでした。完全に同一の内容である可能性があります。');
+    // }
     this.combineToPdf(destPath);
     this.clean(this.splitResultPath);
     this.clean(this.compareResultPath);
@@ -52,8 +53,8 @@ export default class AppCommander {
 
   // 比較ステップ
   compareStep(splitResultPath, outputDiffOnly) {
-    let t1Pages = this.readDir(`${splitResultPath}/1/`);
-    let t2Pages = this.readDir(`${splitResultPath}/2/`);
+    let t1Pages = this.readDir(`${splitResultPath}/2/`);
+    let t2Pages = this.readDir(`${splitResultPath}/1/`);
     if (t1Pages.length <= 0 || t2Pages.length <= 0) {
       throw new Error('No pages!');
     }
